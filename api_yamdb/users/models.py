@@ -1,15 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-ADMIN = 'admin'
-MODERATOR = 'moderator'
-USER = 'user'
-USER_ROLES = [
-    (USER, 'user'),
-    (MODERATOR, 'moderator'),
-    (ADMIN, 'admin'),
-]
-
 
 class User(AbstractUser):
     username = models.CharField(
@@ -17,13 +8,14 @@ class User(AbstractUser):
     email = models.EmailField('Email', blank=False, unique=True)
     bio = models.TextField('О себе', blank=True)
     confirmation_code = models.CharField('Код подтверждения', max_length=30,)
-    role = models.CharField(
-        'Роль', max_length=150, blank=False,
-        choices=USER_ROLES, default='user',
-    )
+    is_active = models.BooleanField(default=False)
+    moderator = models.BooleanField(default=False)
+    admin = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -32,3 +24,11 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    @property
+    def is_staff(self):
+        return self.moderator
+
+    @property
+    def is_admin(self):
+        return self.admin

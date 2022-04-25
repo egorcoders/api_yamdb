@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from users.models import User, ADMIN
+from users.models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, obj, validated_data):
         request = self.context.get('request')
         user = request.user
-        if not user.is_superuser or not user.role == ADMIN:
+        if not user.is_superuser or not user.admin and not user.is_activ:
             raise print('Доступ запрещен')
         return super().update(obj, validated_data)
 
