@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
 
 
-def generate_code():
+def generate_code() -> str:
     """Генерирует случайны код из букв, цифр. Через цикл получаем строку, с кодом."""
     alphabet = string.digits + string.ascii_uppercase + string.ascii_letters
     code_to = str()
@@ -47,7 +47,7 @@ def send_code_to_email(username: str, email: str) -> None:
         raise e
 
 
-def get_tokens_for_user(user):
+def get_tokens_for_user(user: str) -> Dict[str, str]:
     refresh = RefreshToken.for_user(user)
 
     return {
