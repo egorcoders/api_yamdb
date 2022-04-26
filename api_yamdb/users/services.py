@@ -4,10 +4,9 @@ from smtplib import SMTPException
 from typing import Any, Dict
 
 from django.conf.global_settings import EMAIL_HOST_USER
-from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
-from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from users.models import User
 
