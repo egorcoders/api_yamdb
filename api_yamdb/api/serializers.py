@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, obj, validated_data):
         request = self.context.get('request')
         user = request.user
-        if not user.is_superuser or not user.admin and not user.is_activ:
+        if not user.is_superuser or not user.role == 'admin':
             raise print('Доступ запрещен')
         return super().update(obj, validated_data)
 
@@ -35,9 +35,3 @@ class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'username')
-
-    def create(self, validated_data):
-        user = User(**validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
