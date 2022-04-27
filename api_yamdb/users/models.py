@@ -3,13 +3,19 @@ from django.contrib.auth.models import AbstractUser
 from django.core import validators
 from django.db import models
 
+ROLE = (
+    ('user', 'user'),
+    ('moderator', 'moderator'),
+    ('admin', 'admin'),
+)
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password):
         if not email:
-            raise ValueError('Заполнять поле email обязательно')
+            raise ValueError('Заполнять поле email обязательно!!!!111')
         if not username:
-            raise ValueError('Заполнять поле username обязательно')
+            raise ValueError('Заполнять поле username обязательно!!!1!')
         user = self.model(
             email=self.normalize_email(email),
             username=username
@@ -25,9 +31,8 @@ class CustomUserManager(BaseUserManager):
             username=username,
         )
         user.is_staff = True
-        user.admin = True
+        user.role = 'admin'
         user.is_superuser = True
-        user.moderator = True
         user.save(using=self._db)
         return user
 
@@ -40,8 +45,7 @@ class User(AbstractUser):
     bio = models.TextField('О себе', blank=True)
     confirmation_code = models.CharField('Код подтверждения', max_length=30,
                                          blank=True, null=True)
-    moderator = models.BooleanField('Модератор', default=False)
-    admin = models.BooleanField('Админ', default=False)
+    role = models.CharField('Права юзера', max_length=150, choices=ROLE, default='user')
 
     objects = CustomUserManager()
 
@@ -58,16 +62,17 @@ class User(AbstractUser):
 
     def change_help_text(self):
         self.is_active.help_text = 'мой текст'
-        return self.is_staff
+        self.is_active.verbose_name = 'Активен'
+        return self.is_active
 
     @property
     def is_user(self):
-        return self.is_staff
+        return True if not self.is_staff else None
 
     @property
     def is_admin(self):
-        return self.admin
+        return self.role == 'admin'
 
     @property
     def is_moderator(self):
-        return self.moderator
+        return self.role == 'moderator'

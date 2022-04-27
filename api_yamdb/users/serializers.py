@@ -7,14 +7,15 @@ from users.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')
+        lookup_field = ('username',)
 
     def update(self, obj, validated_data):
         request = self.context.get('request')
         user = request.user
-        if not user.is_superuser or not user.role == 'admin':
-            raise print('Доступ запрещен')
-        return super().update(obj, validated_data)
+        if not user.is_superuser and not user.role == 'admin':
+            raise serializers.ValidationError('Доступ закрыт')
+        return super().update(obj, **validated_data)
 
 
 class ConformationCodeSerializer(serializers.ModelSerializer):
@@ -35,3 +36,10 @@ class SignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'username')
+
+
+class UserMeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'first_name', 'last_name', 'bio', 'role')

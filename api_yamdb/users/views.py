@@ -3,7 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from rest_framework import status, filters
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
@@ -11,6 +12,7 @@ from .serializers import (
     SignUpSerializer, ConformationCodeSerializer, UserSerializer)
 from .models import User
 from .services import send_code_to_email, confirm_user
+
 
 OK_STATUS = status.HTTP_200_OK
 BAD_STATUS = status.HTTP_400_BAD_REQUEST
@@ -50,12 +52,16 @@ class UserAPIView(ModelViewSet):
     """Вью для отображения всех пользователей сайта."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    # permission_classes = (IsAdminUser,)
     permission_classes = (AllowAny,)
     filter_backends = (filters.SearchFilter,)
+    lookup_field = ('username', )
     search_fields = ('username',)
+    pagination_class = PageNumberPagination
 
     @action(
-        methods=('GET', 'PATCH',), detail=False, url_path='me', permission_classes=(IsAuthenticated,)
+        methods=('GET', 'PATCH',), detail=False,
+        url_path='me', permission_classes=(IsAuthenticated,),
     )
     def get_me(self, request):
         """Формирует эндпоинт авторизованного пользователя, сделавшего запрос."""
