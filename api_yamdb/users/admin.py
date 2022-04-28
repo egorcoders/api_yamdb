@@ -19,7 +19,7 @@ class CustomUserAdmin(UserAdmin):
         'role'
     )
     search_fields = ('username',)
-    list_editable = ('role',)
+    list_editable = ('role', 'is_staff',)
     empty_value_display = '-empty-'
     ordering = ['-date_joined']
     fieldsets = (

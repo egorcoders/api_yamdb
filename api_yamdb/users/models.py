@@ -33,11 +33,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    def change_help_text(self):
-        self.is_active.help_text = 'мой текст'
-        self.is_active.verbose_name = 'Активен'
-        return self.is_active
-
     @property
     def is_user(self):
         return True if not self.is_staff else None
@@ -49,3 +44,8 @@ class User(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == 'moderator'
+
+    def save(self, *args, **kwargs):
+        if self.role == self.is_admin:
+            self.is_staff = True
+        super().save(*args, **kwargs)

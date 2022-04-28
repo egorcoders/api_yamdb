@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status, filters
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -15,7 +16,7 @@ from .serializers import (
     SignUpSerializer, ConformationCodeSerializer, UserSerializer,
     JustUserSerializer)
 from .models import User
-from .services import send_code_to_email, confirm_user
+from .services import send_code_to_email, get_tokens_for_user
 
 OK_STATUS = status.HTTP_200_OK
 BAD_STATUS = status.HTTP_400_BAD_REQUEST
@@ -46,10 +47,18 @@ class TokenAPIView(APIView):
     def post(self, request):
         serializer = ConformationCodeSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            token = confirm_user(serializer=serializer)
-            return JsonResponse({'token': token}, status=OK_STATUS)
-        return JsonResponse(
-            {'Статус': 'Неверный код подтверждения'}, status=BAD_STATUS)
+            try:
+                username = serializer.validated_data['username']
+                code = serializer.data['confirmation_code']
+            except ValueError as e:
+                raise e
+            user = get_object_or_404(User, username=username)
+            if code == user.confirmation_code:
+                token = get_tokens_for_user(user)
+                user.is_active = True
+                user.save()
+                return JsonResponse({'token': token}, status=OK_STATUS)
+            return JsonResponse({'Статус': 'Неверный код подтверждения'}, status=BAD_STATUS)
 
 
 class UserAPIView(ModelViewSet):
@@ -75,10 +84,13 @@ class UserAPIView(ModelViewSet):
             user = User.objects.get(username=request.user.username)
         except ObjectDoesNotExist as e:
             raise e
-        if request.method == 'patch':
+        if request.method == 'get':
+            serializer = self.get_serializer(user)
+            return Response(serializer.data, status=OK_STATUS)
+        try:
             serializer = self.get_serializer(user, data=request.data, partial=True)
-            if serializer.is_valid(raise_exception=True):
-                serializer.save()
-                return Response(serializer.data, status=OK_STATUS)
-        serializer = self.get_serializer(user)
-        return Response(serializer.data, status=OK_STATUS)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=OK_STATUS)
+        except ValidationError as e:
+            raise e

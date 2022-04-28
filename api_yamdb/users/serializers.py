@@ -14,13 +14,6 @@ class UserSerializer(serializers.ModelSerializer):
             'email': {'required': True}
         }
 
-    def update(self, obj, validated_data):
-        request = self.context.get('request')
-        user = request.user
-        if not user.is_superuser and not user.is_admin:
-            raise serializers.ValidationError('Доступ закрыт')
-        return super().update(obj, validated_data)
-
 
 class ConformationCodeSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)

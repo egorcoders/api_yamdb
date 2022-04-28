@@ -6,9 +6,11 @@ from typing import Any, Dict
 from django.conf.global_settings import EMAIL_HOST_USER
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from users.models import User
+from .models import User
 
 
 def generate_code() -> str:
@@ -49,20 +51,7 @@ def send_code_to_email(username: str, email: str) -> None:
 
 def get_tokens_for_user(user: str) -> Dict[str, str]:
     refresh = RefreshToken.for_user(user)
-
     return {
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
-
-
-def confirm_user(serializer: Any) -> Dict[str, str]:
-    """Подтверждает регистрацию пользователя."""
-    username = serializer.validated_data['username']
-    user = User.objects.get(username=username)
-    code = serializer.data['confirmation_code']
-    if user.confirmation_code == code and user.username == username:
-        token = get_tokens_for_user(user)
-        user.is_active = True
-        user.save()
-        return token
