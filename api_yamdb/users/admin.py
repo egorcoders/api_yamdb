@@ -23,7 +23,9 @@ class CustomUserAdmin(UserAdmin):
     empty_value_display = '-empty-'
     ordering = ['-date_joined']
     fieldsets = (
-        ('Персональные данные', {'fields': ('username', 'email', 'date_joined',)}),
-        ('Административные права', {'fields': ('is_active', 'role', 'is_superuser',)}),
+        ('Персональные данные',
+         {'fields': ('username', 'email', 'date_joined',)}),
+        ('Административные права',
+         {'fields': ('is_active', 'role', 'is_superuser',)}),
         ('Прочее', {'fields': ('bio', 'password')}),
     )

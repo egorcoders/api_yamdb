@@ -1,4 +1,3 @@
-from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.core import validators
 from django.db import models
@@ -18,9 +17,12 @@ class User(AbstractUser):
     bio = models.TextField('О себе', blank=True)
     confirmation_code = models.CharField('Код подтверждения', max_length=30,
                                          blank=True, null=True)
-    role = models.CharField('Права юзера', max_length=150, choices=ROLE, default='user')
-    first_name = models.CharField(max_length=150, null=True, blank=True)
-    last_name = models.CharField(max_length=150, null=True, blank=True)
+    role = models.CharField(
+        'Права юзера', max_length=150, choices=ROLE, default='user')
+    first_name = models.CharField(
+        max_length=150, null=True, blank=True)
+    last_name = models.CharField(
+        max_length=150, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

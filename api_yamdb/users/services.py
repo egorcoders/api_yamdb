@@ -1,20 +1,20 @@
 import random
 import string
 from smtplib import SMTPException
-from typing import Any, Dict
+from typing import Dict
 
 from django.conf.global_settings import EMAIL_HOST_USER
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
 
 
 def generate_code() -> str:
-    """Генерирует случайны код из букв, цифр. Через цикл получаем строку, с кодом."""
+    """Генерирует случайны код из букв, цифр.
+    Через цикл получаем строку, с кодом.
+    """
     alphabet = string.digits + string.ascii_uppercase + string.ascii_letters
     code_to = str()
     for i in random.sample(alphabet, 6):
@@ -23,7 +23,9 @@ def generate_code() -> str:
 
 
 def get_confirmation_code(username: str) -> str:
-    """Получает токен определенного юзера и сохраняет его в confirmation_code"""
+    """Получает токен определенного юзера
+     и сохраняет его в confirmation_code.
+     """
     try:
         user = User.objects.get(username=username)
     except ObjectDoesNotExist as e:
@@ -40,7 +42,7 @@ def send_code_to_email(username: str, email: str) -> None:
     confirmation_code = get_confirmation_code(username)
     try:
         email = EmailMessage(
-            body=f'{username} для завершения регистрации ваш код {confirmation_code}',
+            body=f'{username} ваш код {confirmation_code}',
             from_email=EMAIL_HOST_USER,
             to=[f'{email}'],
         )

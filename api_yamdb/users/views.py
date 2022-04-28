@@ -23,8 +23,8 @@ BAD_STATUS = status.HTTP_400_BAD_REQUEST
 
 
 class UserCreate(APIView):
-    """Вью для отображения регистрации пользователя и отправки сообщения на указанный mail
-    кода подтверждения.
+    """Вью для отображения регистрации пользователя и
+    отправки сообщения на указанный mail кода подтверждения.
     """
     queryset = get_user_model()
     permission_classes = (AllowAny,)
@@ -41,7 +41,9 @@ class UserCreate(APIView):
 
 
 class TokenAPIView(APIView):
-    """Вью для подтверждения полного доступа к сайту зарегистрированного пользователя."""
+    """Вью для подтверждения полного доступа к
+    сайту зарегистрированного пользователя.
+    """
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -58,7 +60,8 @@ class TokenAPIView(APIView):
                 user.is_active = True
                 user.save()
                 return JsonResponse({'token': token}, status=OK_STATUS)
-            return JsonResponse({'Статус': 'Неверный код подтверждения'}, status=BAD_STATUS)
+            return JsonResponse(
+                {'Статус': 'Неверный код подтверждения'}, status=BAD_STATUS)
 
 
 class UserAPIView(ModelViewSet):
@@ -72,7 +75,8 @@ class UserAPIView(ModelViewSet):
     pagination_class = PageNumberPagination
 
     def get_object(self):
-        return get_object_or_404(self.queryset, username=self.kwargs["username"])
+        return get_object_or_404(
+            self.queryset, username=self.kwargs["username"])
 
     @action(
         methods=('get', 'patch',), detail=False,
@@ -88,7 +92,8 @@ class UserAPIView(ModelViewSet):
             serializer = self.get_serializer(user)
             return Response(serializer.data, status=OK_STATUS)
         try:
-            serializer = self.get_serializer(user, data=request.data, partial=True)
+            serializer = self.get_serializer(
+                user, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=OK_STATUS)
