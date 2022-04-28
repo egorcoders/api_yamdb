@@ -10,33 +10,6 @@ ROLE = (
 )
 
 
-class CustomUserManager(BaseUserManager):
-    def create_user(self, username, email, password):
-        if not email:
-            raise ValueError('Заполнять поле email обязательно!!!!111')
-        if not username:
-            raise ValueError('Заполнять поле username обязательно!!!1!')
-        user = self.model(
-            email=self.normalize_email(email),
-            username=username
-        )
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, username, email, password, ):
-        user = self.create_user(
-            email=self.normalize_email(email),
-            password=password,
-            username=username,
-        )
-        user.is_staff = True
-        user.role = 'admin'
-        user.is_superuser = True
-        user.save(using=self._db)
-        return user
-
-
 class User(AbstractUser):
     username = models.CharField(
         'Имя пользователя', max_length=50, blank=False, unique=True)
@@ -46,8 +19,8 @@ class User(AbstractUser):
     confirmation_code = models.CharField('Код подтверждения', max_length=30,
                                          blank=True, null=True)
     role = models.CharField('Права юзера', max_length=150, choices=ROLE, default='user')
-
-    objects = CustomUserManager()
+    first_name = models.CharField(max_length=150, null=True, blank=True)
+    last_name = models.CharField(max_length=150, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
