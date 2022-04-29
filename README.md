@@ -52,10 +52,10 @@ python manage.py migrate
 ```
 Создать файл e.env, в котором необходимо создать переменные:
 
-SOCIAL_AUTH_VK_OAUTH2_KEY
-SOCIAL_AUTH_VK_OAUTH2_SECRET
-EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD
+- SOCIAL_AUTH_VK_OAUTH2_KEY
+- SOCIAL_AUTH_VK_OAUTH2_SECRET
+- EMAIL_HOST_USER
+- EMAIL_HOST_PASSWORD
 
 ```
 
