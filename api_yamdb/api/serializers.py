@@ -2,7 +2,21 @@ from rest_framework import serializers
 from reviews.models import Category, Genre, Title, current_year
 
 
-class TitleSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
+    '''Сериалайзер категорий.'''
+    class Meta:
+        model = Category
+        fields = ('name', 'slug')
+
+
+class GenreSerializer(serializers.ModelSerializer):
+    '''Сериалайзер жанров.'''
+    class Meta:
+        model = Genre
+        fields = ('name', 'slug')
+
+
+class TitleWriteSerializer(serializers.ModelSerializer):
     '''Сериалайзер произведений.'''
     genre = serializers.SlugRelatedField(
         slug_field='slug',
@@ -31,15 +45,17 @@ class TitleSerializer(serializers.ModelSerializer):
         return year
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    '''Сериалайзер категорий.'''
-    class Meta:
-        model = Category
-        fields = ('name', 'slug')
+class TitleViewSerializer(serializers.ModelSerializer):
+    '''Сериалайзер произведений.'''
+    genre = GenreSerializer(many=True, required=False)
+    category = CategorySerializer(required=True,)
+    rating = serializers.IntegerField(read_only=True, default=0)
 
-
-class GenreSerializer(serializers.ModelSerializer):
-    '''Сериалайзер жанров.'''
     class Meta:
-        model = Genre
-        fields = ('name', 'slug')
+        model = Title
+        fields = (
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
+        )
+        read_only_fields = (
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
+        )

@@ -1,11 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import AllowAny
 from reviews.models import Category, Genre, Title
 
 from api.serializers import (CategorySerializer, GenreSerializer,
-                             TitleSerializer)
+                             TitleViewSerializer, TitleWriteSerializer)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -14,7 +14,11 @@ class TitleViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     permission_classes = (AllowAny,)
     filter_backends = (DjangoFilterBackend,)
-    serializer_class = TitleSerializer
+
+    def get_serializer_class(self):
+        if self.request.method in ('POST', 'PATCH'):
+            return TitleWriteSerializer
+        return TitleViewSerializer
 
 
 class GenreViewSet(viewsets.ModelViewSet):
