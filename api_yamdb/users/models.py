@@ -21,9 +21,9 @@ class User(AbstractUser):
     role = models.CharField(
         'Права юзера', max_length=150, choices=ROLE, default='user')
     first_name = models.CharField(
-        max_length=150, null=True, blank=True)
+        'Имя', max_length=150, null=True, blank=True)
     last_name = models.CharField(
-        max_length=150, null=True, blank=True)
+        'Фамилия', max_length=150, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

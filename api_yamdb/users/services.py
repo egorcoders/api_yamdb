@@ -52,6 +52,7 @@ def send_code_to_email(username: str, email: str) -> None:
 
 
 def get_tokens_for_user(user: str) -> Dict[str, str]:
+    """Создает токен пользователю."""
     refresh = RefreshToken.for_user(user)
     return {
         'refresh': str(refresh),

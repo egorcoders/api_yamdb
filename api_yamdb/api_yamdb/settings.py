@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'djoser',
     'rest_framework_simplejwt',
+
     'users',
     'reviews',
     'api',
@@ -78,10 +79,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-INTERNAL_IPS = [
-    '127.0.0.1',
-    'localhost',
-]
+INTERNAL_IPS = ['127.0.0.1', 'localhost', ]
 
 AUTH_USER_MODEL = 'users.User'
 
