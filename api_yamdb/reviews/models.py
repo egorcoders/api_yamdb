@@ -1,4 +1,5 @@
 import datetime as dt
+
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -34,8 +35,7 @@ class Category(models.Model):
     """Модель категорий."""
     name = models.CharField(max_length=200,)
     slug = models.SlugField(
-        max_length=100,
-        unique=True,
+        max_length=100, unique=True,
     )
 
     def __str__(self) -> str:
@@ -62,14 +62,18 @@ class TitleGenre(models.Model):
 class Review(models.Model):
     """Модель отзывов."""
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reviews')
+        User, on_delete=models.CASCADE, related_name='reviews'
+    )
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='reviews')
+        Title, on_delete=models.CASCADE, related_name='reviews'
+    )
     text = models.TextField()
     pub_date = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True)
+        'Дата добавления', auto_now_add=True, db_index=True
+    )
     score = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)],)
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+    )
 
     class Meta:
         constraints = [
@@ -81,9 +85,12 @@ class Review(models.Model):
 class Comments(models.Model):
     """Модель комментариев."""
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comments')
+        User, on_delete=models.CASCADE, related_name='comments'
+    )
     review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name='comments')
+        Review, on_delete=models.CASCADE, related_name='comments'
+    )
     text = models.TextField()
     pub_date = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True)
+        'Дата добавления', auto_now_add=True, db_index=True
+    )

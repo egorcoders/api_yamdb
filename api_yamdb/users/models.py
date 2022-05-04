@@ -12,18 +12,27 @@ ROLE = (
 class User(AbstractUser):
     """Модель пользователя."""
     username = models.CharField(
-        'Имя пользователя', max_length=50, blank=False, unique=True)
-    email = models.EmailField('Email', blank=False, unique=True,
-                              validators=[validators.validate_email])
+        'Имя пользователя', max_length=50, blank=False, unique=True
+    )
+    email = models.EmailField(
+        'Email',
+        blank=False,
+        unique=True,
+        validators=[validators.validate_email]
+    )
     bio = models.TextField('О себе', blank=True)
-    confirmation_code = models.CharField('Код подтверждения', max_length=30,
-                                         blank=True, null=True)
+    confirmation_code = models.CharField(
+        'Код подтверждения', max_length=30, blank=True, null=True
+    )
     role = models.CharField(
-        'Права юзера', max_length=150, choices=ROLE, default='user')
+        'Права юзера', max_length=150, choices=ROLE, default='user'
+    )
     first_name = models.CharField(
-        'Имя', max_length=150, null=True, blank=True)
+        'Имя', max_length=150, null=True, blank=True
+    )
     last_name = models.CharField(
-        'Фамилия', max_length=150, null=True, blank=True)
+        'Фамилия', max_length=150, null=True, blank=True
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

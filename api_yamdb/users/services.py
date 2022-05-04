@@ -3,7 +3,7 @@ import string
 from smtplib import SMTPException
 from typing import Dict
 
-from django.conf.global_settings import EMAIL_HOST_USER
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -27,7 +27,7 @@ def get_confirmation_code(username: str) -> str:
      и сохраняет его в confirmation_code.
      """
     try:
-        user = User.objects.get(username=username)
+        user = User.objects.get_or_create(username=username)
     except ObjectDoesNotExist as e:
         raise e
     confirmation_code = generate_code()
@@ -43,7 +43,7 @@ def send_code_to_email(username: str, email: str) -> None:
     try:
         email = EmailMessage(
             body=f'{username} ваш код {confirmation_code}',
-            from_email=EMAIL_HOST_USER,
+            from_email=settings.EMAIL_HOST_USER,
             to=[f'{email}'],
         )
         email.send()
