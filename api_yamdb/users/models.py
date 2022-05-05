@@ -7,6 +7,9 @@ ROLE = (
     ('moderator', 'moderator'),
     ('admin', 'admin'),
 )
+# Я не понял, как работать с этим.
+# Ошибка постоянно. Гуглил, не помогло
+# AttributeError: module 'django.db.models' has no attribute 'TextChoices'
 
 
 class User(AbstractUser):
