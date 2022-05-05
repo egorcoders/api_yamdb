@@ -11,11 +11,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
+from .models import User
 from .permissions import IsAdmin, IsUser
 from .serializers import (
-    SignUpSerializer, ConformationCodeSerializer, UserSerializer,
-    JustUserSerializer)
-from .models import User
+    SignUpSerializer,
+    ConformationCodeSerializer,
+    UserSerializer,
+    JustUserSerializer
+)
 from .services import send_code_to_email, get_tokens_for_user
 
 OK_STATUS = status.HTTP_200_OK
@@ -31,13 +34,14 @@ class UserCreate(APIView):
 
     def post(self, request):
         serializer = SignUpSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            username = serializer.validated_data['username']
-            email = serializer.validated_data['email']
-            serializer.save()
-            send_code_to_email(username, email)
-            return JsonResponse({'email': email, 'username': username},
-                                status=OK_STATUS)
+        serializer.is_valid(raise_exception=True)
+        username = serializer.validated_data['username']
+        email = serializer.validated_data['email']
+        serializer.save()
+        send_code_to_email(username, email)
+        return JsonResponse({'email': email, 'username': username},
+                            status=OK_STATUS
+                            )
 
 
 class TokenAPIView(APIView):
@@ -48,27 +52,28 @@ class TokenAPIView(APIView):
 
     def post(self, request):
         serializer = ConformationCodeSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            try:
-                username = serializer.validated_data['username']
-                code = serializer.data['confirmation_code']
-            except ValueError as e:
-                raise e
-            user = get_object_or_404(User, username=username)
-            if code == user.confirmation_code:
-                token = get_tokens_for_user(user)
-                user.is_active = True
-                user.save()
-                return JsonResponse({'token': token}, status=OK_STATUS)
-            return JsonResponse(
-                {'Статус': 'Неверный код подтверждения'}, status=BAD_STATUS)
+        serializer.is_valid(raise_exception=True)
+        try:
+            username = serializer.validated_data['username']
+            code = serializer.data['confirmation_code']
+        except ValueError as e:
+            raise e
+        user = get_object_or_404(User, username=username)
+        if code == user.confirmation_code:
+            token = get_tokens_for_user(user)
+            user.is_active = True
+            user.save()
+            return JsonResponse({'token': token}, status=OK_STATUS)
+        return JsonResponse(
+            {'Статус': 'Неверный код подтверждения'}, status=BAD_STATUS
+        )
 
 
 class UserAPIView(ModelViewSet):
     """Вью для отображения всех пользователей сайта."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = ([IsAdmin, ])
+    permission_classes = [IsAdmin, ]
     filter_backends = (filters.SearchFilter,)
     lookup_field = 'username'
     search_fields = ('username',)
@@ -84,11 +89,8 @@ class UserAPIView(ModelViewSet):
         serializer_class=JustUserSerializer
     )
     def get_me(self, request):
-        try:
-            user = User.objects.get(username=request.user.username)
-        except ObjectDoesNotExist as e:
-            raise e
-        if request.method == 'get':
+        user = request.user
+        if request.method == 'GET':
             serializer = self.get_serializer(user)
             return Response(serializer.data, status=OK_STATUS)
         try:
