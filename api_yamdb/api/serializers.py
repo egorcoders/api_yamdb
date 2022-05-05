@@ -7,9 +7,10 @@ from reviews.models import (
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    """Сериалайзер отзывов."""
+    '''Сериалайзер отзывов.'''
     author = serializers.SlugRelatedField(
-        read_only=True, slug_field='username',)
+        read_only=True, slug_field='username',
+    )
 
     class Meta:
         fields = '__all__'
@@ -22,12 +23,13 @@ class ReviewSerializer(serializers.ModelSerializer):
             title_id=self.context['view'].kwargs.get('title_id')
         ).exists() and self.context['request'].method == 'POST':
             raise serializers.ValidationError(
-                "Нельзя оставить два ревью на одно произведение.")
+                'Нельзя оставить два ревью на одно произведение.'
+            )
         return data
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    """Сериалайзер комментариев."""
+    '''Сериалайзер комментариев.'''
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
@@ -39,21 +41,21 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """Сериалайзер категорий."""
+    '''Сериалайзер категорий.'''
     class Meta:
         model = Category
         fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    """Сериалайзер жанров."""
+    '''Сериалайзер жанров.'''
     class Meta:
         model = Genre
         fields = ('name', 'slug')
 
 
 class TitleWriteSerializer(serializers.ModelSerializer):
-    """Сериалайзер произведений."""
+    '''Сериалайзер произведений.'''
     genre = serializers.SlugRelatedField(
         slug_field='slug',
         queryset=Genre.objects.all(),
@@ -71,17 +73,18 @@ class TitleWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category')
+            'id', 'name', 'year', 'tdescripion', 'genre', 'category'
+        )
 
     def validate_year(self, year):
-        """Валидация поля year."""
-        if not (1800 < year <= current_year()):
+        '''Валидация поля year.'''
+        if not (0 <= year <= current_year()):
             raise serializers.ValidationError('Год не подходит')
         return year
 
 
 class TitleViewSerializer(serializers.ModelSerializer):
-    """Сериалайзер произведений."""
+    '''Сериалайзер произведений.'''
     genre = GenreSerializer(many=True, required=False)
     category = CategorySerializer(required=True,)
     rating = serializers.SerializerMethodField()
@@ -89,12 +92,14 @@ class TitleViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-            'id', 'name', 'year', 'rating', 'description', 'genre', 'category')
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
+        )
         read_only_fields = (
-            'id', 'name', 'year', 'rating', 'description', 'genre', 'category')
+            'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
+        )
 
     def get_rating(self, obj):
-        """Подсчет рейтинга произведения."""
+        '''Подсчет рейтинга произведения.'''
         reviews = obj.reviews.all()
         sum = 0
         if reviews.count() != 0:

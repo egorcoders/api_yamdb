@@ -8,8 +8,8 @@ from users.models import User
 class CustomUserAdmin(UserAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        form.base_fields['is_active'].help_text = "Статус пользователя"
-        form.base_fields['is_superuser'].help_text = "Права бога этого сайта"
+        form.base_fields['is_active'].help_text = 'Статус пользователя'
+        form.base_fields['is_superuser'].help_text = 'Права бога этого сайта'
         return form
 
     list_display = (
