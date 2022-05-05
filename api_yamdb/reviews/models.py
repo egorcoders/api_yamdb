@@ -62,35 +62,61 @@ class TitleGenre(models.Model):
 class Review(models.Model):
     """Модель отзывов."""
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reviews'
+        User,
+        related_name='reviews',
+        on_delete=models.CASCADE,
+        verbose_name='Автор отзыва',
     )
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='reviews'
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name='Оцениваемое произведение',
     )
-    text = models.TextField()
+    text = models.TextField('Текст отзыва')
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
-    score = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)],
+    score = models.PositiveSmallIntegerField(
+        'Оценка произведения',
+        validators=[
+            MinValueValidator(1, message='Оценка должна быть не меньше 1.'),
+            MaxValueValidator(10, message='Оценка должна быть не больше 10.')
+        ],
     )
+
+    def __str__(self) -> str:
+        return self.text[:10]
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['author', 'title'], name='unique follow',)
+                fields=['author', 'title'], name='unique follow',
+            )
         ]
+        ordering = ['-pub_date']
 
 
 class Comments(models.Model):
     """Модель комментариев."""
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comments'
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Автор комментария',
     )
     review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name='comments'
+        Review,
+        on_delete=models.CASCADE, related_name='comments',
+        verbose_name='Комментируемый отзыв'
     )
-    text = models.TextField()
+    text = models.TextField('Текст комметария')
     pub_date = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
     )
+
+    def __str__(self) -> str:
+        return self.text[:10]
+
+    class Meta:
+        ordering = ['-pub_date']
