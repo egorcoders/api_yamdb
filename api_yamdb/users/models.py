@@ -10,7 +10,7 @@ ROLE = (
 
 
 class User(AbstractUser):
-    '''Модель пользователя.'''
+    """Модель пользователя."""
     username = models.CharField(
         'Имя пользователя', max_length=50, blank=False, unique=True
     )

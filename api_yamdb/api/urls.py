@@ -7,13 +7,16 @@ from api.views import (
 )
 from users.views import UserAPIView
 
+
 router = routers.DefaultRouter()
 router.register(
     r'titles/(?P<title_id>\d+)/reviews',
-    ReviewViewSet, basename='reviews')
+    ReviewViewSet, basename='reviews'
+)
 router.register(
     r'titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments',
-    CommentViewSet, basename='comments')
+    CommentViewSet, basename='comments'
+)
 router.register(r'users', UserAPIView, basename='users')
 router.register(r'^categories', CategoryViewSet, basename='categories'),
 router.register(r'^genres', GenreViewSet, basename='genres'),

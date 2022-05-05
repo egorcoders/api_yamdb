@@ -12,9 +12,9 @@ from .models import User
 
 
 def generate_code() -> str:
-    '''Генерирует случайны код из букв, цифр.
+    """Генерирует случайны код из букв, цифр.
     Через цикл получаем строку, с кодом.
-    '''
+    """
     alphabet = string.digits + string.ascii_uppercase + string.ascii_letters
     code_to = str()
     for i in random.sample(alphabet, 6):
@@ -23,9 +23,9 @@ def generate_code() -> str:
 
 
 def get_confirmation_code(username: str) -> str:
-    '''Получает токен определенного юзера
+    """Получает токен определенного юзера
      и сохраняет его в confirmation_code.
-     '''
+     """
     try:
         user = User.objects.get_or_create(username=username)
     except ObjectDoesNotExist as e:
@@ -38,7 +38,7 @@ def get_confirmation_code(username: str) -> str:
 
 
 def send_code_to_email(username: str, email: str) -> None:
-    '''Отправляет сообщение с кодом по переданному адресу.'''
+    """Отправляет сообщение с кодом по переданному адресу."""
     confirmation_code = get_confirmation_code(username)
     try:
         email = EmailMessage(
