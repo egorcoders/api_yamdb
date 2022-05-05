@@ -1,5 +1,4 @@
-import random
-import string
+import uuid
 from smtplib import SMTPException
 from typing import Dict
 
@@ -11,17 +10,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
 
 
-def generate_code() -> str:
-    """Генерирует случайны код из букв, цифр.
-    Через цикл получаем строку, с кодом.
-    """
-    alphabet = string.digits + string.ascii_uppercase + string.ascii_letters
-    code_to = str()
-    for i in random.sample(alphabet, 6):
-        code_to += i
-    return code_to
-
-
 def get_confirmation_code(username: str) -> str:
     """Получает токен определенного юзера
      и сохраняет его в confirmation_code.
@@ -31,7 +19,7 @@ def get_confirmation_code(username: str) -> str:
         user = User.objects.get(username=username)
     except ObjectDoesNotExist as e:
         raise e
-    confirmation_code = generate_code()
+    confirmation_code = str(uuid.uuid4())
     user.confirmation_code = confirmation_code
     user.is_active = False
     user.save()
