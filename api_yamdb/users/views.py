@@ -23,9 +23,9 @@ BAD_STATUS = status.HTTP_400_BAD_REQUEST
 
 
 class UserCreate(APIView):
-    """Вью для отображения регистрации пользователя и
+    '''Вью для отображения регистрации пользователя и
     отправки сообщения на указанный mail кода подтверждения.
-    """
+    '''
     queryset = get_user_model()
     permission_classes = (AllowAny,)
 
@@ -41,9 +41,9 @@ class UserCreate(APIView):
 
 
 class TokenAPIView(APIView):
-    """Вью для подтверждения полного доступа к
+    '''Вью для подтверждения полного доступа к
     сайту зарегистрированного пользователя.
-    """
+    '''
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -65,7 +65,7 @@ class TokenAPIView(APIView):
 
 
 class UserAPIView(ModelViewSet):
-    """Вью для отображения всех пользователей сайта."""
+    '''Вью для отображения всех пользователей сайта.'''
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = ([IsAdmin, ])
@@ -76,7 +76,7 @@ class UserAPIView(ModelViewSet):
 
     def get_object(self):
         return get_object_or_404(
-            self.queryset, username=self.kwargs["username"])
+            self.queryset, username=self.kwargs['username'])
 
     @action(
         methods=('get', 'patch',), detail=False,

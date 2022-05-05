@@ -23,7 +23,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             title_id=self.context['view'].kwargs.get('title_id')
         ).exists() and self.context['request'].method == 'POST':
             raise serializers.ValidationError(
-                "Нельзя оставить два ревью на одно произведение."
+                'Нельзя оставить два ревью на одно произведение.'
             )
         return data
 
@@ -73,12 +73,12 @@ class TitleWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = (
-            'id', 'name', 'year', 'description', 'genre', 'category'
+            'id', 'name', 'year', 'tdescripion', 'genre', 'category'
         )
 
     def validate_year(self, year):
         '''Валидация поля year.'''
-        if not (1800 < year <= current_year()):
+        if not (0 <= year <= current_year()):
             raise serializers.ValidationError('Год не подходит')
         return year
 
