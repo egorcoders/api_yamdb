@@ -1,12 +1,20 @@
 import datetime as dt
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
 
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+from django.forms import ValidationError
 from users.models import User
 
 
 def current_year():
     return dt.datetime.today().year
+
+
+def validate_year(year):
+    '''Валидация поля year.'''
+    current_year = dt.datetime.today().year
+    if not (0 <= year <= current_year):
+        raise ValidationError('Год не подходит')
 
 
 class Title(models.Model):
@@ -30,6 +38,7 @@ class Title(models.Model):
     )
     year = models.IntegerField(
         db_index=True,
+        validators=(validate_year,)
     )
     description = models.TextField(
         max_length=200,
