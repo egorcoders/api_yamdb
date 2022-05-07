@@ -80,7 +80,7 @@ class UserAPIView(ModelViewSet):
 
     def get_object(self):
         return get_object_or_404(
-            self.queryset, username=self.kwargs["username"])
+            self.queryset, username=self.kwargs['username'])
 
     @action(
         methods=('get', 'patch',), detail=False,
