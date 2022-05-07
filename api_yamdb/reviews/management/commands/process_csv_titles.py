@@ -1,5 +1,6 @@
 import csv
-
+import os
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from reviews.models import Title
@@ -7,10 +8,15 @@ from reviews.models import Title
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        with open('D:\\Dev\\api_yamdb\\api_yamdb\\static\\data\\titles.csv',
-                  'r', encoding="utf-8") as f:
+        with open(
+            os.path.join(
+                settings.BASE_DIR,
+                'static', 'data', 'titles.csv'
+            ),
+            'r', encoding='utf-8'
+        ) as f:
             csv_reader = csv.reader(f, delimiter=',')
             for row in csv_reader:
                 print(row)
                 Title.objects.create(id=int(row[0]), name=row[1], year=row[2],
-                                     category=row[3])
+                                     category_id=int(row[3]))

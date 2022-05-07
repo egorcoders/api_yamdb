@@ -52,38 +52,10 @@ class Title(models.Model):
         return self.category[:10]
 
 
-class Category(models.Model):
-    '''Модель категорий.'''
-    name = models.CharField(
-        max_length=200,
-    )
-    slug = models.SlugField(
-        max_length=100,
-        unique=True,
-        db_index=True,
-    )
-
-    class Meta:
-        ordering = ('name',)
-
-    def __str__(self) -> str:
-        return self.slug[:10]
-
-
 class Genre(models.Model):
-    '''Модель жанров.'''
-    name = models.CharField(
-        max_length=200,
-        db_index=True,
-    )
-    slug = models.SlugField(
-        max_length=100,
-        unique=True,
-        db_index=True,
-    )
-
-    class Meta:
-        ordering = ('name',)
+    """Модель жанров."""
+    name = models.CharField(max_length=200,)
+    slug = models.SlugField(max_length=100, unique=True,)
 
     def __str__(self) -> str:
         return self.slug[:10]
@@ -93,63 +65,68 @@ class TitleGenre(models.Model):
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
 
-    class Meta:
-        ordering = ('title',)
-
     def __str__(self) -> str:
-        return self.title, self.genre
+        return f'{self.title},{self.genre}'
 
 
 class Review(models.Model):
-    '''Модель отзывов.'''
+    """Модель отзывов."""
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reviews')
-    title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='reviews')
-    text = models.TextField()
-    pub_date = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True)
-    score = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        User,
+        related_name='reviews',
+        on_delete=models.CASCADE,
+        verbose_name='Автор отзыва',
     )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name='Оцениваемое произведение',
+    )
+    text = models.TextField('Текст отзыва')
+    pub_date = models.DateTimeField(
+        'Дата добавления', auto_now_add=True, db_index=True
+    )
+    score = models.PositiveSmallIntegerField(
+        'Оценка произведения',
+        validators=[
+            MinValueValidator(1, message='Оценка должна быть не меньше 1.'),
+            MaxValueValidator(10, message='Оценка должна быть не больше 10.')
+        ],
+    )
+
+    def __str__(self) -> str:
+        return self.text[:10]
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=('author', 'title'),
-                name='unique author and title',
+                fields=['author', 'title'], name='unique follow',
             )
         ]
-
-    class Meta:
-        ordering = ('author',)
-
-    def __str__(self) -> str:
-        return f'Ревью {self.author}'
+        ordering = ['-pub_date']
 
 
 class Comments(models.Model):
-    '''Модель комментариев.'''
+    """Модель комментариев."""
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='comments'
+        related_name='comments',
+        verbose_name='Автор комментария',
     )
     review = models.ForeignKey(
         Review,
-        on_delete=models.CASCADE,
-        related_name='comments'
+        on_delete=models.CASCADE, related_name='comments',
+        verbose_name='Комментируемый отзыв'
     )
-    text = models.TextField()
+    text = models.TextField('Текст комметария')
     pub_date = models.DateTimeField(
-        auto_now_add=True,
-        db_index=True,
-        verbose_name='Дата добавления комментария',
-        help_text='Укажите дату добавления комментария',
+        'Дата добавления', auto_now_add=True, db_index=True
     )
-
-    class Meta:
-        ordering = ('pub_date',)
 
     def __str__(self) -> str:
-        return f'Комментарий {self.author}'
+        return self.text[:10]
+
+    class Meta:
+        ordering = ['-pub_date']

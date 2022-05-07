@@ -2,28 +2,40 @@ from django.contrib.auth.models import AbstractUser
 from django.core import validators
 from django.db import models
 
-ROLE = (
-    ('user', 'user'),
-    ('moderator', 'moderator'),
-    ('admin', 'admin'),
-)
 
-
+# Да, так понятнее и удобнее стало:)
 class User(AbstractUser):
-    '''Модель пользователя.'''
+    """Модель пользователя."""
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+    CHOICES = [
+        ('admin', ADMIN),
+        ('moderator', MODERATOR),
+        ('user', USER)
+    ]
     username = models.CharField(
-        'Имя пользователя', max_length=50, blank=False, unique=True)
-    email = models.EmailField('Email', blank=False, unique=True,
-                              validators=[validators.validate_email])
+        'Имя пользователя', max_length=50, blank=False, unique=True
+    )
+    email = models.EmailField(
+        'Email',
+        blank=False,
+        unique=True,
+        validators=[validators.validate_email]
+    )
     bio = models.TextField('О себе', blank=True)
-    confirmation_code = models.CharField('Код подтверждения', max_length=30,
-                                         blank=True, null=True)
+    confirmation_code = models.CharField(
+        'Код подтверждения', max_length=30, blank=True, null=True
+    )
     role = models.CharField(
-        'Права юзера', max_length=150, choices=ROLE, default='user')
+        'Права юзера', max_length=150, choices=CHOICES, default='user'
+    )
     first_name = models.CharField(
-        max_length=150, null=True, blank=True)
+        'Имя', max_length=150, null=True, blank=True
+    )
     last_name = models.CharField(
-        max_length=150, null=True, blank=True)
+        'Фамилия', max_length=150, null=True, blank=True
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -42,11 +54,11 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == 'admin'
+        return self.role == self.ADMIN
 
     @property
     def is_moderator(self):
-        return self.role == 'moderator'
+        return self.role == self.MODERATOR
 
     def save(self, *args, **kwargs):
         if self.role == self.is_admin:

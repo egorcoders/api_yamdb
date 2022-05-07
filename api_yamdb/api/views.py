@@ -29,8 +29,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         serializer.save(
-            author=self.request.user,
-            title=title
+            author=self.request.user, title=title
         )
 
 
@@ -43,20 +42,25 @@ class CommentViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
-        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        review = get_object_or_404(
+            Review, pk=self.kwargs.get('review_id'),
+            title_id=self.kwargs.get('title_id')
+        )
         new_queryset = review.comments.all()
         return new_queryset
 
     def perform_create(self, serializer):
-        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        review = get_object_or_404(
+            Review, pk=self.kwargs.get('review_id'),
+            title_id=self.kwargs.get('title_id')
+        )
         serializer.save(
-            author=self.request.user,
-            review=review
+            author=self.request.user, review=review
         )
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    '''Вьюсет произведений.'''
+    """Вьюсет произведений."""
     queryset = Title.objects.all()
     pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminOrReadOnly,)
@@ -70,7 +74,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class GenreViewSet(MixinViewSet):
-    '''Вьюсет жанров.'''
+    """Вьюсет жанров."""
     queryset = Genre.objects.all()
     pagination_class = LimitOffsetPagination
     serializer_class = GenreSerializer
@@ -81,7 +85,7 @@ class GenreViewSet(MixinViewSet):
 
 
 class CategoryViewSet(MixinViewSet):
-    '''Вьюсет категорий.'''
+    """Вьюсет категорий."""
     queryset = Category.objects.all()
     pagination_class = LimitOffsetPagination
     serializer_class = CategorySerializer
