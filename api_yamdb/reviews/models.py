@@ -1,8 +1,8 @@
 import datetime as dt
 
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from django.db import models
+from django.forms import ValidationError
 from users.models import User
 
 
@@ -10,36 +10,46 @@ def current_year():
     return dt.datetime.today().year
 
 
+def validate_year(year):
+    '''Валидация поля year.'''
+    current_year = dt.datetime.today().year
+    if not (0 <= year <= current_year):
+        raise ValidationError('Год не подходит')
+
+
 class Title(models.Model):
-    """Модель произведений."""
+    '''Модель произведений.'''
     category = models.ForeignKey(
         'Category',
         related_name='titles',
         blank=True,
         null=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+        db_index=True,
     )
     genre = models.ManyToManyField(
         'Genre',
         through='TitleGenre',
+        db_index=True,
     )
-    name = models.CharField(max_length=200)
-    year = models.IntegerField()
-    description = models.TextField(max_length=200, null=True,)
+    name = models.CharField(
+        max_length=200,
+        db_index=True,
+    )
+    year = models.IntegerField(
+        db_index=True,
+        validators=(validate_year,)
+    )
+    description = models.TextField(
+        max_length=200,
+        null=True,
+    )
+
+    class Meta:
+        ordering = ('name',)
 
     def __str__(self) -> str:
         return self.category[:10]
-
-
-class Category(models.Model):
-    """Модель категорий."""
-    name = models.CharField(max_length=200,)
-    slug = models.SlugField(
-        max_length=100, unique=True,
-    )
-
-    def __str__(self) -> str:
-        return self.slug[:10]
 
 
 class Genre(models.Model):
