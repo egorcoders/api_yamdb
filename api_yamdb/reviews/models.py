@@ -5,16 +5,17 @@ from django.db import models
 from django.forms import ValidationError
 from users.models import User
 
+from api_yamdb.settings import START_YEAR
+
 
 def current_year():
     return dt.datetime.today().year
 
 
 def validate_year(year):
-    """Валидация поля year."""
-    the_current_year = dt.datetime.today().year
-    very_first_day = 0
-    if not (very_first_day <= year <= the_current_year):
+    '''Валидация поля year.'''
+    current_year = dt.datetime.today().year
+    if not (START_YEAR <= year <= current_year):
         raise ValidationError('Год не подходит')
 
 
@@ -62,8 +63,26 @@ class Title(models.Model):
         return self.category[:10]
 
 
+class Category(models.Model):
+    '''Модель категорий.'''
+    name = models.CharField(
+        max_length=200,
+    )
+    slug = models.SlugField(
+        max_length=100,
+        unique=True,
+        db_index=True,
+    )
+
+    class Meta:
+        ordering = ('name',)
+
+    def __str__(self) -> str:
+        return self.slug[:10]
+
+
 class Genre(models.Model):
-    """Модель жанров."""
+    '''Модель жанров.'''
     name = models.CharField(max_length=200,)
     slug = models.SlugField(max_length=100, unique=True,)
 
@@ -80,7 +99,7 @@ class TitleGenre(models.Model):
 
 
 class Review(models.Model):
-    """Модель отзывов."""
+    '''Модель отзывов.'''
     author = models.ForeignKey(
         User,
         related_name='reviews',
@@ -118,7 +137,7 @@ class Review(models.Model):
 
 
 class Comments(models.Model):
-    """Модель комментариев."""
+    '''Модель комментариев.'''
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
