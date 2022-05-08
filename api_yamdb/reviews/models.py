@@ -11,14 +11,24 @@ def current_year():
 
 
 def validate_year(year):
-    '''Валидация поля year.'''
-    current_year = dt.datetime.today().year
-    if not (0 <= year <= current_year):
+    """Валидация поля year."""
+    the_current_year = dt.datetime.today().year
+    very_first_day = 0
+    if not (very_first_day <= year <= the_current_year):
         raise ValidationError('Год не подходит')
 
 
+class Category(models.Model):
+    """Модель категории одно к многим """
+    name = models.CharField(max_length=256)
+    slug = models.SlugField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Title(models.Model):
-    '''Модель произведений.'''
+    """Модель произведений."""
     category = models.ForeignKey(
         'Category',
         related_name='titles',

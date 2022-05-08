@@ -1,5 +1,6 @@
 import csv
 import os
+
 from django.conf import settings
 from django.core.management.base import BaseCommand
 
@@ -17,6 +18,5 @@ class Command(BaseCommand):
         ) as f:
             csv_reader = csv.reader(f, delimiter=',')
             for row in csv_reader:
-                print(row)
                 Title.objects.create(id=int(row[0]), name=row[1], year=row[2],
                                      category_id=int(row[3]))

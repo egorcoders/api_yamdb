@@ -3,7 +3,6 @@ from django.core import validators
 from django.db import models
 
 
-# Да, так понятнее и удобнее стало:)
 class User(AbstractUser):
     """Модель пользователя."""
     USER = 'user'
