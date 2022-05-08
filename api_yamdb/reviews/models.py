@@ -19,8 +19,17 @@ def validate_year(year):
         raise ValidationError('Год не подходит')
 
 
+class Category(models.Model):
+    """Модель категории одно к многим """
+    name = models.CharField(max_length=256)
+    slug = models.SlugField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Title(models.Model):
-    '''Модель произведений.'''
+    """Модель произведений."""
     category = models.ForeignKey(
         'Category',
         related_name='titles',
