@@ -115,9 +115,6 @@ class Review(models.Model):
         ],
     )
 
-    def __str__(self) -> str:
-        return self.text[:10]
-
     class Meta:
         constraints = [
             models.UniqueConstraint(
@@ -125,6 +122,9 @@ class Review(models.Model):
             )
         ]
         ordering = ['-pub_date']
+
+    def __str__(self) -> str:
+        return self.text[:10]
 
 
 class Comments(models.Model):
@@ -145,8 +145,8 @@ class Comments(models.Model):
         'Дата добавления', auto_now_add=True, db_index=True
     )
 
-    def __str__(self) -> str:
-        return self.text[:10]
-
     class Meta:
         ordering = ['-pub_date']
+
+    def __str__(self) -> str:
+        return self.text[:10]
