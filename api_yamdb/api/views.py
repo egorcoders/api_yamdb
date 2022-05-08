@@ -60,7 +60,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    """Вьюсет произведений."""
+    '''Вьюсет произведений.'''
     queryset = Title.objects.all()
     pagination_class = LimitOffsetPagination
     permission_classes = (IsAdminOrReadOnly,)
@@ -74,7 +74,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class GenreViewSet(MixinViewSet):
-    """Вьюсет жанров."""
+    '''Вьюсет жанров.'''
     queryset = Genre.objects.all()
     pagination_class = LimitOffsetPagination
     serializer_class = GenreSerializer
@@ -85,7 +85,7 @@ class GenreViewSet(MixinViewSet):
 
 
 class CategoryViewSet(MixinViewSet):
-    """Вьюсет категорий."""
+    '''Вьюсет категорий.'''
     queryset = Category.objects.all()
     pagination_class = LimitOffsetPagination
     serializer_class = CategorySerializer
