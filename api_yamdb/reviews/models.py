@@ -24,7 +24,7 @@ class Title(models.Model):
         through='TitleGenre',
     )
     name = models.CharField(max_length=200)
-    year = models.IntegerField(default=current_year,)
+    year = models.IntegerField()
     description = models.TextField(max_length=200, null=True,)
 
     def __str__(self) -> str:

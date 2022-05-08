@@ -78,7 +78,8 @@ class TitleWriteSerializer(serializers.ModelSerializer):
 
     def validate_year(self, year):
         """Валидация поля year."""
-        if not (1800 < year <= current_year()):
+        year_before_none_live = 666
+        if not (year_before_none_live < year <= current_year()):
             raise serializers.ValidationError('Год не подходит')
         return year
 
