@@ -1,11 +1,11 @@
 import datetime as dt
 
+from api_yamdb.settings import START_YEAR
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.forms import ValidationError
-from users.models import User
 
-from api_yamdb.settings import START_YEAR
+from users.models import User
 
 
 def current_year():
